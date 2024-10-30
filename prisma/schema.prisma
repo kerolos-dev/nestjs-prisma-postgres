@@ -1,0 +1,49 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+model User {
+  id          Int       @id @default(autoincrement())
+  name        String
+  email       String    @unique
+  password    String
+  gender      Gender
+  phone       String
+  role        Role
+  isConfirmed Boolean   @default(false)
+  forgetCode  String?
+  tokens      Token[]   // Assuming you have a Token model and foreign key set up
+}
+
+model Token {
+  id        Int      @id @default(autoincrement())
+  token     String   // Field to store the token value
+  isValid   Boolean  @default(true) // Field to store if the token is valid or not
+  agent     String?  // Optional field to store agent information
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+}
