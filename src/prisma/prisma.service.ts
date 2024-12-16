@@ -1,20 +1,17 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 
-
-
 @Injectable()
-export class PrismaService  extends  PrismaClient implements  OnModuleInit{
+export class PrismaService extends PrismaClient implements OnModuleInit {
+  [x: string]: any;
   onModuleInit() {
-      this.$connect()
-      .then(()=> console.log('connected  to  DB'))
-      .catch((err)=>{
-       console.log('Error  Congesting  to  DB')
+    this.$connect()
+      .then(() => console.log('connected  to  DB'))
+      .catch((err) => {
+        console.log('Error  Congesting  to  DB');
       });
   }
 }
-
-
 
 // import { Injectable, OnModuleInit, Logger } from '@nestjs/common';
 // import { PrismaClient } from '@prisma/client';

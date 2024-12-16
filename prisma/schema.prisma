@@ -9,7 +9,7 @@ generator client {
   previewFeatures = ["postgresqlExtensions"]
 }
 
-datasource db {
+datasource  db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
@@ -34,16 +34,49 @@ model User {
   role        Role
   isConfirmed Boolean   @default(false)
   forgetCode  String?
-  tokens      Token[]   // Assuming you have a Token model and foreign key set up
+  tokens      Token[]
+  categories  Category[]
 }
 
 model Token {
   id        Int      @id @default(autoincrement())
-  token     String   // Field to store the token value
-  isValid   Boolean  @default(true) // Field to store if the token is valid or not
-  agent     String?  // Optional field to store agent information
+  token     String
+  isValid   Boolean  @default(true)
+  agent     String?
+  isConfirmed Boolean @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   userId    Int
   user      User     @relation(fields: [userId], references: [id])
+}
+
+model Email {
+  id        Int      @id @default(autoincrement())
+  to        String
+  subject   String
+  text      String
+  html      String?
+  sentAt    DateTime @default(now())
+  status    String   @default("PENDING")
+}
+
+model Category {
+  id          Int     @id @default(autoincrement())
+  name        String
+  description String
+  imageId     Int?    @unique  // إضافة @unique هنا
+  image       Image?  @relation(fields: [imageId], references: [id])
+  user        User    @relation(fields: [userId], references: [id])
+  userId      Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Image {
+  id          Int     @id @default(autoincrement())
+  public_id   String
+  secure_url  String
+  category    Category? @relation
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
